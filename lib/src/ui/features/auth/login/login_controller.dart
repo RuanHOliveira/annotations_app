@@ -1,5 +1,6 @@
 import 'package:annotations_app/src/data/models/user.dart';
 import 'package:annotations_app/src/data/repositories/user_repository.dart';
+import 'package:annotations_app/src/data/services/session_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'login_controller.g.dart';
@@ -8,6 +9,7 @@ class LoginController = LoginControllerBase with _$LoginController;
 
 abstract class LoginControllerBase with Store {
   final UserRepository _userRepository;
+  final SessionService _sessionService;
 
   @observable
   bool isLoading = false;
@@ -15,8 +17,11 @@ abstract class LoginControllerBase with Store {
   @observable
   String? errorMessage;
 
-  LoginControllerBase({required UserRepository userRepository})
-    : _userRepository = userRepository;
+  LoginControllerBase({
+    required UserRepository userRepository,
+    required SessionService sessionService,
+  }) : _userRepository = userRepository,
+       _sessionService = sessionService;
 
   @action
   void clearError() => errorMessage = null;
@@ -26,15 +31,13 @@ abstract class LoginControllerBase with Store {
     isLoading = true;
     errorMessage = null;
 
-    // Delay apenas para simular requisição de login
-    await Future.delayed(Duration(seconds: 2));
-
     try {
-      final result = await _userRepository.login(
+      final user = await _userRepository.login(
         email: (email).trim(),
         password: password,
       );
-      return result;
+      await _sessionService.saveUserId(user.id!);
+      return user;
     } catch (e) {
       errorMessage = e.toString().replaceFirst('Exception: ', '');
       return null;

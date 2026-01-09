@@ -20,6 +20,12 @@ class CustomTextFormField extends StatefulWidget {
   final VoidCallback? onEditingComplete;
   final AutovalidateMode? autovalidateMode;
   final double borderRadius;
+  final bool labelTextUppercase;
+  final int? minLines;
+  final int? maxLines;
+  final bool expands;
+  final TextInputAction? textInputAction;
+  final Color? fillColor;
 
   const CustomTextFormField({
     super.key,
@@ -40,6 +46,12 @@ class CustomTextFormField extends StatefulWidget {
     this.onEditingComplete,
     this.autovalidateMode,
     this.borderRadius = 12,
+    this.labelTextUppercase = false,
+    this.maxLines = 1,
+    this.expands = false,
+    this.fillColor,
+    this.textInputAction,
+    this.minLines,
   });
 
   @override
@@ -66,10 +78,20 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
       child: TextFormField(
         autovalidateMode: widget.autovalidateMode,
         onChanged: widget.onChanged,
-        textInputAction: TextInputAction.next,
+        textInputAction: widget.textInputAction ?? TextInputAction.next,
+        minLines: widget.expands ? null : widget.minLines,
+        maxLines: widget.expands ? null : widget.maxLines,
+        expands: widget.expands,
         onEditingComplete:
             widget.onEditingComplete ??
-            () => FocusScope.of(context).nextFocus(),
+            () {
+              final isMultiline =
+                  widget.expands ||
+                  (widget.maxLines != null && widget.maxLines! > 1);
+              if (isMultiline) return;
+              FocusScope.of(context).nextFocus();
+            },
+
         onTapOutside:
             widget.onTapOutside ??
             (_) {
@@ -82,7 +104,11 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
         validator: widget.validator,
         style: AppTextStyles.text14.copyWith(color: cs.primary),
         inputFormatters: widget.inputFormatters,
-        keyboardType: widget.keyboardType,
+        keyboardType:
+            widget.keyboardType ??
+            ((widget.maxLines != null && widget.maxLines! > 1) || widget.expands
+                ? TextInputType.multiline
+                : TextInputType.text),
         obscureText: widget.obscureText ?? false,
         maxLength: widget.maxLength,
         cursorColor: cs.primary,
@@ -93,10 +119,12 @@ class _CustomTextFormFieldState extends State<CustomTextFormField> {
             vertical: 14,
           ),
           filled: true,
-          fillColor: cs.secondary,
+          fillColor: widget.fillColor ?? cs.secondary,
           hintText: widget.hintText,
           hintStyle: TextStyle(color: cs.primary),
-          labelText: widget.labelText?.toUpperCase(),
+          labelText: widget.labelTextUppercase
+              ? widget.labelText?.toUpperCase()
+              : widget.labelText,
           labelStyle: TextStyle(
             color: cs.primary,
             letterSpacing: 0.6,

@@ -1,5 +1,6 @@
 import 'package:annotations_app/src/data/models/user.dart';
 import 'package:annotations_app/src/data/repositories/user_repository.dart';
+import 'package:annotations_app/src/data/services/session_service.dart';
 import 'package:mobx/mobx.dart';
 
 part 'register_controller.g.dart';
@@ -8,6 +9,7 @@ class RegisterController = RegisterControllerBase with _$RegisterController;
 
 abstract class RegisterControllerBase with Store {
   final UserRepository _userRepository;
+  final SessionService _sessionService;
 
   @observable
   bool isLoading = false;
@@ -15,8 +17,11 @@ abstract class RegisterControllerBase with Store {
   @observable
   String? errorMessage;
 
-  RegisterControllerBase({required UserRepository userRepository})
-    : _userRepository = userRepository;
+  RegisterControllerBase({
+    required UserRepository userRepository,
+    required SessionService sessionService,
+  }) : _userRepository = userRepository,
+       _sessionService = sessionService;
 
   @action
   void clearError() => errorMessage = null;
@@ -30,16 +35,14 @@ abstract class RegisterControllerBase with Store {
     isLoading = true;
     errorMessage = null;
 
-    // Delay apenas para simular requisição de register
-    await Future.delayed(Duration(seconds: 2));
-
     try {
-      final result = await _userRepository.register(
+      final user = await _userRepository.register(
         email: (email).trim(),
         name: name.trim(),
         password: password,
       );
-      return result;
+      await _sessionService.saveUserId(user.id!);
+      return user;
     } catch (e) {
       errorMessage = e.toString().replaceFirst('Exception: ', '');
       return null;

@@ -6,11 +6,12 @@ class UsersDao {
   const UsersDao();
 
   Future<Database> get _db async => LocalDatabase.instance;
+  final String _tableName = 'users';
 
   Future<User?> findById(int id) async {
     final db = await _db;
     final rows = await db.query(
-      'users',
+      _tableName,
       where: 'id = ? AND deleted_at IS NULL',
       whereArgs: [id],
       limit: 1,
@@ -22,7 +23,7 @@ class UsersDao {
   Future<User?> findByEmail(String email) async {
     final db = await _db;
     final rows = await db.query(
-      'users',
+      _tableName,
       where: 'email = ? AND deleted_at IS NULL',
       whereArgs: [email.trim().toLowerCase()],
       limit: 1,
@@ -34,13 +35,13 @@ class UsersDao {
   Future<int> insert(User user) async {
     final db = await _db;
     final map = user.toMap()..remove('id');
-    return db.insert('users', map);
+    return db.insert(_tableName, map);
   }
 
   Future<int> softDelete(int id) async {
     final db = await _db;
     return db.update(
-      'users',
+      _tableName,
       {
         'deleted_at': DateTime.now().toIso8601String(),
         'updated_at': DateTime.now().toIso8601String(),

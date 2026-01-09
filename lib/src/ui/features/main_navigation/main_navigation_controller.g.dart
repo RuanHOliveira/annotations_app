@@ -9,6 +9,15 @@ part of 'main_navigation_controller.dart';
 // ignore_for_file: non_constant_identifier_names, unnecessary_brace_in_string_interps, unnecessary_lambdas, prefer_expression_function_bodies, lines_longer_than_80_chars, avoid_as, avoid_annotating_with_dynamic, no_leading_underscores_for_local_identifiers
 
 mixin _$MainNavigationController on MainNavigationControllerBase, Store {
+  Computed<List<Widget>>? _$screensOptionsComputed;
+
+  @override
+  List<Widget> get screensOptions =>
+      (_$screensOptionsComputed ??= Computed<List<Widget>>(
+        () => super.screensOptions,
+        name: 'MainNavigationControllerBase.screensOptions',
+      )).value;
+
   late final _$selectedIndexAtom = Atom(
     name: 'MainNavigationControllerBase.selectedIndex',
     context: context,
@@ -27,22 +36,14 @@ mixin _$MainNavigationController on MainNavigationControllerBase, Store {
     });
   }
 
-  late final _$screensOptionsAtom = Atom(
-    name: 'MainNavigationControllerBase.screensOptions',
+  late final _$clearAuthAsyncAction = AsyncAction(
+    'MainNavigationControllerBase.clearAuth',
     context: context,
   );
 
   @override
-  List<Widget> get screensOptions {
-    _$screensOptionsAtom.reportRead();
-    return super.screensOptions;
-  }
-
-  @override
-  set screensOptions(List<Widget> value) {
-    _$screensOptionsAtom.reportWrite(value, super.screensOptions, () {
-      super.screensOptions = value;
-    });
+  Future<void> clearAuth() {
+    return _$clearAuthAsyncAction.run(() => super.clearAuth());
   }
 
   late final _$MainNavigationControllerBaseActionController = ActionController(

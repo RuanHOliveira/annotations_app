@@ -28,6 +28,7 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
         return Scaffold(
           backgroundColor: cs.surface,
           drawer: _AppDrawer(
+            mainNavigationController: widget._mainNavigationController,
             currentIndex: widget._mainNavigationController.selectedIndex,
             onItemSelected: _changeScreen,
           ),
@@ -47,10 +48,15 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
 }
 
 class _AppDrawer extends StatelessWidget {
+  final MainNavigationController mainNavigationController;
   final int currentIndex;
   final ValueChanged<int> onItemSelected;
 
-  const _AppDrawer({required this.currentIndex, required this.onItemSelected});
+  const _AppDrawer({
+    required this.currentIndex,
+    required this.onItemSelected,
+    required this.mainNavigationController,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +107,7 @@ class _AppDrawer extends StatelessWidget {
                 ),
                 const SizedBox(height: 4),
                 Text(
-                  'Anotações inteligentes',
+                  'Notas inteligentes',
                   style: AppTextStyles.text14.copyWith(
                     color: cs.primary.withAlpha(153),
                   ),
@@ -121,7 +127,7 @@ class _AppDrawer extends StatelessWidget {
                   const SizedBox(height: 8),
                   _DrawerItem(
                     index: 0,
-                    label: 'Anotações',
+                    label: 'Notas',
                     icon: Icons.grid_view_rounded,
                     isSelected: currentIndex == 0,
                     onTap: onItemSelected,
@@ -137,7 +143,8 @@ class _AppDrawer extends StatelessWidget {
                   _DrawerActionItem(
                     label: 'Sair',
                     icon: Icons.logout,
-                    onTap: () {
+                    onTap: () async {
+                      await mainNavigationController.clearAuth();
                       if (context.mounted) context.go(Routes.login);
                     },
                   ),

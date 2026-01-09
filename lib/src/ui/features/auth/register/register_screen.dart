@@ -148,7 +148,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       return PrimaryButton(
                         text: 'Cadastrar',
                         isLoading: widget._registerController.isLoading,
-                        disable: !widget._registerController.isLoading,
+                        disable: widget._registerController.isLoading,
                         onPressed: _tryRegister,
                       );
                     },
