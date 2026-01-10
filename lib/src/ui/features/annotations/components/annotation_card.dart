@@ -1,7 +1,9 @@
 import 'package:annotations_app/src/data/models/annotation.dart';
+import 'package:annotations_app/src/ui/core/components/useful/section_header.dart';
 import 'package:annotations_app/src/ui/core/themes/app_text_styles.dart';
-import 'package:annotations_app/src/ui/core/widgets/inputs/custom_text_form_field.dart';
-import 'package:annotations_app/src/ui/core/widgets/useful/custom_toast.dart';
+import 'package:annotations_app/src/ui/core/components/inputs/custom_text_form_field.dart';
+import 'package:annotations_app/src/ui/core/components/useful/custom_toast.dart';
+import 'package:annotations_app/src/utils/%20utils.dart';
 import 'package:flutter/material.dart';
 
 class AnnotationCard extends StatelessWidget {
@@ -90,8 +92,8 @@ class AnnotationCard extends StatelessWidget {
 
     final content = annotation.content;
     final totalChars = content.length;
-    final totalLetters = _countLetters(content);
-    final totalNumbers = _countNumbers(content);
+    final totalLetters = Utils.countLetters(content);
+    final totalNumbers = Utils.countNumbers(content);
 
     return showGeneralDialog<void>(
       context: context,
@@ -120,7 +122,6 @@ class AnnotationCard extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Row(
                   children: [
                     Container(
@@ -165,13 +166,15 @@ class AnnotationCard extends StatelessWidget {
                     ),
                   ],
                 ),
-
                 const SizedBox(height: 16),
-
-                _SectionHeader(title: 'Conteúdo'),
+                SectionHeader(title: 'Conteúdo'),
                 const SizedBox(height: 6),
                 Container(
-                  constraints: const BoxConstraints(maxHeight: 220),
+                  constraints: const BoxConstraints(
+                    maxHeight: 110,
+                    minHeight: 110,
+                    minWidth: double.infinity,
+                  ),
                   padding: const EdgeInsets.all(14),
                   decoration: BoxDecoration(
                     color: cs.surface,
@@ -181,23 +184,14 @@ class AnnotationCard extends StatelessWidget {
                     ),
                   ),
                   child: SingleChildScrollView(
-                    child: Row(
-                      mainAxisSize: MainAxisSize.max,
-                      children: [
-                        Text(
-                          annotation.content,
-                          style: AppTextStyles.text14.copyWith(
-                            color: cs.primary,
-                          ),
-                        ),
-                      ],
+                    child: Text(
+                      annotation.content,
+                      style: AppTextStyles.text14.copyWith(color: cs.primary),
                     ),
                   ),
                 ),
-
                 const SizedBox(height: 16),
-
-                _SectionHeader(title: 'Detalhes'),
+                SectionHeader(title: 'Detalhes'),
                 const SizedBox(height: 6),
                 _StatsGrid(
                   totalChars: totalChars,
@@ -205,7 +199,6 @@ class AnnotationCard extends StatelessWidget {
                   totalNumbers: totalNumbers,
                   totalEdits: annotation.editCount,
                 ),
-
                 const SizedBox(height: 16),
               ],
             ),
@@ -278,7 +271,7 @@ class AnnotationCard extends StatelessWidget {
                 Text(
                   'Remover "${_annotation.title}"?',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 15, color: cs.primary),
+                  style: AppTextStyles.text16.copyWith(color: cs.primary),
                 ),
                 const SizedBox(height: 28),
                 Row(
@@ -313,12 +306,10 @@ class AnnotationCard extends StatelessWidget {
                             color: Colors.red,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               'Remover',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                              style: AppTextStyles.text16.copyWith(
                                 color: Colors.white,
                               ),
                             ),
@@ -391,7 +382,7 @@ class AnnotationCard extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
                     Text(
-                      'Editar nota',
+                      'Editar',
                       style: AppTextStyles.textBold20.copyWith(
                         color: cs.inversePrimary,
                       ),
@@ -468,12 +459,10 @@ class AnnotationCard extends StatelessWidget {
                             color: Colors.blue,
                             borderRadius: BorderRadius.circular(14),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
                               'Editar',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontWeight: FontWeight.w600,
+                              style: AppTextStyles.text16.copyWith(
                                 color: Colors.white,
                               ),
                             ),
@@ -504,16 +493,6 @@ class AnnotationCard extends StatelessWidget {
     if (updated != null) {
       await onConfirmEdit(updated);
     }
-  }
-
-  int _countLetters(String text) {
-    final reg = RegExp(r'\p{L}', unicode: true);
-    return reg.allMatches(text).length;
-  }
-
-  int _countNumbers(String text) {
-    final reg = RegExp(r'\p{N}', unicode: true);
-    return reg.allMatches(text).length;
   }
 }
 
@@ -590,7 +569,6 @@ class _StatsGrid extends StatelessWidget {
             Expanded(child: tile('Edições', totalEdits, Icons.edit_rounded)),
           ],
         ),
-
         const SizedBox(height: 6),
         Row(
           children: [
@@ -612,23 +590,6 @@ class _StatsGrid extends StatelessWidget {
           ],
         ),
       ],
-    );
-  }
-}
-
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Text(
-      title.toUpperCase(),
-      style: AppTextStyles.textBold12.copyWith(
-        color: cs.primary.withValues(alpha: 0.5),
-      ),
     );
   }
 }

@@ -13,11 +13,6 @@ class SessionService {
     return prefs.getInt(_keyUserId);
   }
 
-  Future<bool> isLoggedIn() async {
-    final prefs = await SharedPreferences.getInstance();
-    return prefs.containsKey(_keyUserId);
-  }
-
   Future<void> clear() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_keyUserId);

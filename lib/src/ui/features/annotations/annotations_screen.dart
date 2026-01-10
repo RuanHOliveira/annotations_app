@@ -1,6 +1,8 @@
+import 'package:annotations_app/src/ui/core/components/useful/custom_app_bar.dart';
+import 'package:annotations_app/src/ui/core/components/useful/section_header.dart';
 import 'package:annotations_app/src/ui/core/themes/app_text_styles.dart';
-import 'package:annotations_app/src/ui/core/widgets/inputs/custom_text_form_field.dart';
-import 'package:annotations_app/src/ui/core/widgets/useful/custom_toast.dart';
+import 'package:annotations_app/src/ui/core/components/inputs/custom_text_form_field.dart';
+import 'package:annotations_app/src/ui/core/components/useful/custom_toast.dart';
 import 'package:annotations_app/src/ui/features/annotations/annotations_controller.dart';
 import 'package:annotations_app/src/ui/features/annotations/components/annotation_card.dart';
 import 'package:flutter/material.dart';
@@ -28,103 +30,95 @@ class _AnnotationsScreenState extends State<AnnotationsScreen> {
   @override
   Widget build(BuildContext context) {
     final ColorScheme cs = Theme.of(context).colorScheme;
+    final padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
 
     return CustomScrollView(
       physics: const BouncingScrollPhysics(
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        SliverAppBar(
-          shape: OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.transparent),
-            borderRadius: BorderRadius.circular(16),
-          ),
-          title: Text(
-            'Notas',
-            style: AppTextStyles.textBold22.copyWith(
-              color: cs.inversePrimary,
-              letterSpacing: -0.5,
+        CustomAppBar(title: 'Notas'),
+        SliverPadding(
+          padding: padding,
+          sliver: SliverToBoxAdapter(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    SectionHeader(title: 'Minhas notas'),
+                    GestureDetector(
+                      onTap: () => _showAddAnnotation(context),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 12,
+                          vertical: 6,
+                        ),
+                        decoration: BoxDecoration(
+                          color: cs.secondary,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Text(
+                          'Novo',
+                          style: AppTextStyles.textBold12.copyWith(
+                            color: cs.primary.withValues(alpha: 0.5),
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ),
           ),
-          leading: Row(
-            children: [
-              const SizedBox(width: 8),
-              GestureDetector(
-                onTap: () => Scaffold.of(context).openDrawer(),
-                child: Container(
-                  padding: const EdgeInsets.all(10),
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  child: Icon(
-                    Icons.menu_rounded,
-                    color: cs.inversePrimary,
-                    size: 20,
+        ),
+        Observer(
+          builder: (_) {
+            if (widget._annotationsController.isLoading) {
+              return SliverPadding(
+                padding: padding,
+                sliver: SliverToBoxAdapter(
+                  child: Center(
+                    child: CircularProgressIndicator(
+                      color: cs.inversePrimary,
+                      strokeWidth: 2.5,
+                    ),
                   ),
                 ),
-              ),
-            ],
-          ),
-        ),
-        SliverPadding(
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
-          sliver: SliverList(
-            delegate: SliverChildListDelegate([
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  _SectionHeader(title: 'Minhas notas'),
-                  _AddButton(onTap: () => _showAddAnnotation(context)),
-                ],
-              ),
-              const SizedBox(height: 6),
-              Observer(
-                builder: (_) {
-                  if (widget._annotationsController.isLoading) {
-                    return const Padding(
-                      padding: EdgeInsets.only(top: 24),
-                      child: Center(child: CircularProgressIndicator()),
+              );
+            }
+
+            if (widget._annotationsController.annotations.isEmpty) {
+              return SliverPadding(
+                padding: padding,
+                sliver: const SliverToBoxAdapter(child: _EmptyState()),
+              );
+            }
+
+            return SliverPadding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              sliver: SliverList(
+                delegate: SliverChildBuilderDelegate(
+                  (context, index) {
+                    final annotation =
+                        widget._annotationsController.annotations[index];
+
+                    return AnnotationCard(
+                      annotation: annotation,
+                      onConfirmEdit: (updated) async {
+                        await widget._annotationsController.update(updated);
+                      },
+                      onConfirmDelete: (id) async {
+                        await widget._annotationsController.delete(id);
+                      },
                     );
-                  }
-
-                  final list = widget._annotationsController.annotations;
-
-                  if (list.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.only(top: 6),
-                      child: const _EmptyState(
-                        icon: Icons.sticky_note_2_outlined,
-                        title: 'Nenhuma nota criada',
-                        subtitle: 'Clique em Novo para iniciar',
-                      ),
-                    );
-                  }
-
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 6),
-                    child: Column(
-                      children: list
-                          .map(
-                            (a) => AnnotationCard(
-                              annotation: a,
-                              onConfirmEdit: (updated) async {
-                                await widget._annotationsController.update(
-                                  updated,
-                                );
-                              },
-                              onConfirmDelete: (id) async {
-                                await widget._annotationsController.delete(id);
-                              },
-                            ),
-                          )
-                          .toList(),
-                    ),
-                  );
-                },
+                  },
+                  childCount: widget._annotationsController.annotations.length,
+                ),
               ),
-            ]),
-          ),
+            );
+          },
         ),
       ],
     );
@@ -138,22 +132,16 @@ class _AnnotationsScreenState extends State<AnnotationsScreen> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
-      builder: (context) => _AddAnnotation(
-        annotationsController: widget._annotationsController,
-        userId: 1, // TODO: pegar da sessão
-      ),
+      builder: (context) =>
+          _AddAnnotation(annotationsController: widget._annotationsController),
     );
   }
 }
 
 class _AddAnnotation extends StatefulWidget {
   final AnnotationsController annotationsController;
-  final int userId;
 
-  const _AddAnnotation({
-    required this.annotationsController,
-    required this.userId,
-  });
+  const _AddAnnotation({required this.annotationsController});
 
   @override
   State<_AddAnnotation> createState() => _AddAnnotationState();
@@ -184,11 +172,7 @@ class _AddAnnotationState extends State<_AddAnnotation> {
       return;
     }
 
-    await widget.annotationsController.create(
-      userId: widget.userId,
-      title: title,
-      content: content,
-    );
+    await widget.annotationsController.create(title: title, content: content);
 
     if (mounted) Navigator.pop(context);
   }
@@ -218,7 +202,6 @@ class _AddAnnotationState extends State<_AddAnnotation> {
               ),
             ),
             const SizedBox(height: 20),
-
             CustomTextFormField(
               padding: EdgeInsets.all(0),
               controller: _titleController,
@@ -235,7 +218,6 @@ class _AddAnnotationState extends State<_AddAnnotation> {
               maxLines: 6,
             ),
             const SizedBox(height: 24),
-
             GestureDetector(
               onTap: () async => _addAnnotation(),
               child: Container(
@@ -262,33 +244,8 @@ class _AddAnnotationState extends State<_AddAnnotation> {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  final String title;
-  const _SectionHeader({required this.title});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Text(
-      title.toUpperCase(),
-      style: AppTextStyles.textBold12.copyWith(
-        color: cs.primary.withValues(alpha: 0.5),
-      ),
-    );
-  }
-}
-
 class _EmptyState extends StatelessWidget {
-  final IconData icon;
-  final String title;
-  final String subtitle;
-
-  const _EmptyState({
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+  const _EmptyState();
 
   @override
   Widget build(BuildContext context) {
@@ -313,51 +270,24 @@ class _EmptyState extends StatelessWidget {
               borderRadius: BorderRadius.circular(16),
             ),
             child: Icon(
-              icon,
+              Icons.sticky_note_2_outlined,
               size: 32,
               color: cs.primary.withValues(alpha: 0.5),
             ),
           ),
           const SizedBox(height: 16),
           Text(
-            title,
+            'Nenhuma nota criada',
             style: AppTextStyles.textBold14.copyWith(color: cs.primary),
           ),
           const SizedBox(height: 4),
           Text(
-            subtitle,
+            'Clique em Novo para iniciar',
             style: AppTextStyles.text12.copyWith(
               color: cs.primary.withValues(alpha: 0.5),
             ),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _AddButton extends StatelessWidget {
-  final VoidCallback onTap;
-  const _AddButton({required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-        decoration: BoxDecoration(
-          color: cs.secondary,
-          borderRadius: BorderRadius.circular(8),
-        ),
-        child: Text(
-          'Novo',
-          style: AppTextStyles.textBold12.copyWith(
-            color: cs.primary.withValues(alpha: 0.5),
-          ),
-        ),
       ),
     );
   }

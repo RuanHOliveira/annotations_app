@@ -1,11 +1,8 @@
 import 'package:annotations_app/src/ui/core/themes/dark_mode.dart';
 import 'package:annotations_app/src/ui/core/themes/light_mode.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class ThemeProvider extends ChangeNotifier {
-  static const _prefKey = 'THEME_MODE'; // 'L' ou 'D'
-
   ThemeData _themeData = lightMode;
   bool _loaded = false; // evita inicialização repetida
 
@@ -18,34 +15,16 @@ class ThemeProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Altera tema
   Future<void> toggleTheme() async {
-    // Alterna em memória
     _themeData = isDarkMode ? lightMode : darkMode;
     notifyListeners();
-
-    // Persiste
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, isDarkMode ? 'D' : 'L');
   }
 
-  /// Carrega o tema salvo (chamar 1x no boot do app)
+  /// Carrega o tema
   Future<void> initializeTheme() async {
-    if (_loaded) return; // idempotente
-
-    final prefs = await SharedPreferences.getInstance();
-    final saved = prefs.getString(_prefKey) ?? 'L';
-
-    _themeData = (saved == 'D') ? darkMode : lightMode;
+    if (_loaded) return;
     _loaded = true;
     notifyListeners();
-  }
-
-  /// Se quiser setar explicitamente
-  Future<void> setDark(bool dark) async {
-    _themeData = dark ? darkMode : lightMode;
-    notifyListeners();
-
-    final prefs = await SharedPreferences.getInstance();
-    await prefs.setString(_prefKey, dark ? 'D' : 'L');
   }
 }

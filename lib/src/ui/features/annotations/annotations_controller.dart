@@ -48,11 +48,7 @@ abstract class AnnotationsControllerBase with Store {
   }
 
   @action
-  Future<void> create({
-    required int userId,
-    required String title,
-    required String content,
-  }) async {
+  Future<void> create({required String title, required String content}) async {
     isLoading = true;
     errorMessage = null;
 

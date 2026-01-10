@@ -79,14 +79,30 @@ mixin _$AnnotationsController on AnnotationsControllerBase, Store {
   );
 
   @override
-  Future<void> create({
-    required int userId,
-    required String title,
-    required String content,
-  }) {
+  Future<void> create({required String title, required String content}) {
     return _$createAsyncAction.run(
-      () => super.create(userId: userId, title: title, content: content),
+      () => super.create(title: title, content: content),
     );
+  }
+
+  late final _$updateAsyncAction = AsyncAction(
+    'AnnotationsControllerBase.update',
+    context: context,
+  );
+
+  @override
+  Future<void> update(Annotation updated) {
+    return _$updateAsyncAction.run(() => super.update(updated));
+  }
+
+  late final _$deleteAsyncAction = AsyncAction(
+    'AnnotationsControllerBase.delete',
+    context: context,
+  );
+
+  @override
+  Future<void> delete(int annotationId) {
+    return _$deleteAsyncAction.run(() => super.delete(annotationId));
   }
 
   @override

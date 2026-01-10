@@ -74,7 +74,6 @@ class _AppDrawer extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Premium Header
           Container(
             padding: EdgeInsets.fromLTRB(28, padding.top + 32, 28, 32),
             child: Column(
@@ -115,8 +114,6 @@ class _AppDrawer extends StatelessWidget {
               ],
             ),
           ),
-
-          // Navigation Items
           Expanded(
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 10.0),
@@ -140,13 +137,43 @@ class _AppDrawer extends StatelessWidget {
                     onTap: onItemSelected,
                   ),
                   const Spacer(),
-                  _DrawerActionItem(
-                    label: 'Sair',
-                    icon: Icons.logout,
-                    onTap: () async {
-                      await mainNavigationController.clearAuth();
-                      if (context.mounted) context.go(Routes.login);
-                    },
+                  Container(
+                    margin: const EdgeInsets.only(bottom: 8),
+                    child: Material(
+                      color: Colors.transparent,
+                      child: InkWell(
+                        onTap: () async {
+                          await mainNavigationController.clearAuth();
+                          if (context.mounted) context.go(Routes.login);
+                        },
+                        borderRadius: BorderRadius.circular(16),
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 16,
+                            vertical: 14,
+                          ),
+                          child: Row(
+                            children: [
+                              Container(
+                                padding: const EdgeInsets.all(8),
+                                child: Icon(
+                                  Icons.logout,
+                                  size: 20,
+                                  color: cs.primary,
+                                ),
+                              ),
+                              const SizedBox(width: 16),
+                              Text(
+                                'Sair',
+                                style: AppTextStyles.text16.copyWith(
+                                  color: cs.inversePrimary.withAlpha(204),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 25),
                 ],
@@ -217,57 +244,6 @@ class _DrawerItem extends StatelessWidget {
                     color: isSelected
                         ? cs.inversePrimary
                         : cs.inversePrimary.withAlpha(204),
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _DrawerActionItem extends StatelessWidget {
-  final String label;
-  final IconData icon;
-  final VoidCallback onTap;
-
-  const _DrawerActionItem({
-    required this.label,
-    required this.icon,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final cs = Theme.of(context).colorScheme;
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () {
-            HapticFeedback.lightImpact();
-            onTap();
-          },
-          borderRadius: BorderRadius.circular(16),
-          child: Container(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
-            child: Row(
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Icon(icon, size: 20, color: cs.primary),
-                ),
-                const SizedBox(width: 16),
-                Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 15,
-                    fontWeight: FontWeight.w500,
-                    color: cs.inversePrimary.withAlpha(204),
                   ),
                 ),
               ],

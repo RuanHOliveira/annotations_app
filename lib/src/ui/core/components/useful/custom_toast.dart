@@ -8,8 +8,6 @@ class CustomToast {
     BuildContext context, {
     required String message,
     required String toastType,
-    String? buttonTitle,
-    Icon? icon,
   }) {
     final ColorScheme cs = Theme.of(context).colorScheme;
 
@@ -51,7 +49,7 @@ class CustomToast {
                 Row(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    icon ?? getIconDefault()!,
+                    getIconDefault()!,
                     const SizedBox(width: 10),
                     Flexible(
                       child: Text(

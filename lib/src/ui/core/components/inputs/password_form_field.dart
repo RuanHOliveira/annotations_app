@@ -1,12 +1,10 @@
-import 'package:annotations_app/src/ui/core/widgets/inputs/custom_text_form_field.dart';
+import 'package:annotations_app/src/ui/core/components/inputs/custom_text_form_field.dart';
 import 'package:flutter/material.dart';
 
 class PasswordFormField extends StatefulWidget {
   final TextEditingController? controller;
   final String? hintText;
-  final String? labelText;
   final FormFieldValidator<String>? validator;
-  final bool? enabled;
   final ValueChanged<String>? onChanged;
   final AutovalidateMode? autovalidateMode;
 
@@ -14,9 +12,7 @@ class PasswordFormField extends StatefulWidget {
     super.key,
     this.controller,
     this.hintText,
-    this.labelText,
     this.validator,
-    this.enabled,
     this.onChanged,
     this.autovalidateMode,
   });
@@ -37,9 +33,7 @@ class _PasswordFormFieldState extends State<PasswordFormField> {
       obscureText: isHidden,
       controller: widget.controller,
       hintText: widget.hintText,
-      labelText: widget.labelText,
       validator: widget.validator,
-      enabled: widget.enabled,
       suffixIcon: InkWell(
         borderRadius: BorderRadius.circular(23.0),
         onTap: () {

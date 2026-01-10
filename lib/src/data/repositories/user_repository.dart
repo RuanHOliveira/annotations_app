@@ -1,6 +1,6 @@
 import 'package:annotations_app/src/data/daos/users_dao.dart';
 import 'package:annotations_app/src/data/models/user.dart';
-import 'package:annotations_app/src/utils/security/password_hasher.dart';
+import 'package:annotations_app/src/utils/%20utils.dart';
 
 class UserRepository {
   final UsersDao _usersDao;
@@ -19,7 +19,7 @@ class UserRepository {
       throw Exception('Email já utilizado!');
     }
 
-    final hashedPassword = PasswordHasher.hash(password);
+    final hashedPassword = Utils.hash(password);
 
     final user = User(
       name: name.trim(),
@@ -38,7 +38,7 @@ class UserRepository {
       throw Exception('Usuário não encontrado!');
     }
 
-    final hashedPassword = PasswordHasher.hash(password);
+    final hashedPassword = Utils.hash(password);
 
     if (user.password != hashedPassword) {
       throw Exception('Credenciais inválidas');
