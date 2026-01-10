@@ -39,6 +39,8 @@ class AnnotationCard extends StatelessWidget {
                 children: [
                   Text(
                     _annotation.title,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: AppTextStyles.textBold16.copyWith(
                       color: cs.inversePrimary,
                       letterSpacing: -0.2,
@@ -104,109 +106,120 @@ class AnnotationCard extends StatelessWidget {
       barrierColor: Colors.black.withAlpha(102),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (dialogContext, animation, secondaryAnimation) => Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          padding: const EdgeInsets.all(24),
-          decoration: BoxDecoration(
-            color: cs.secondary,
-            borderRadius: BorderRadius.circular(28),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(26),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
-              ),
-            ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
           child: Material(
             color: Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Container(
-                      padding: const EdgeInsets.all(12),
-                      decoration: BoxDecoration(
-                        color: cs.surface,
-                        borderRadius: BorderRadius.circular(14),
-                      ),
-                      child: Icon(
-                        Icons.sticky_note_2_outlined,
-                        size: 22,
-                        color: cs.inversePrimary,
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        annotation.title,
-                        maxLines: 2,
-                        overflow: TextOverflow.ellipsis,
-                        style: AppTextStyles.textBold18.copyWith(
-                          color: cs.inversePrimary,
-                          letterSpacing: -0.3,
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    GestureDetector(
-                      onTap: () => Navigator.pop(dialogContext),
-                      child: Container(
-                        padding: const EdgeInsets.all(10),
-                        decoration: BoxDecoration(
-                          color: cs.surface,
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                        child: Icon(
-                          Icons.close_rounded,
-                          size: 18,
-                          color: cs.primary.withValues(alpha: 0.7),
-                        ),
-                      ),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.all(24),
+                decoration: BoxDecoration(
+                  color: cs.secondary,
+                  borderRadius: BorderRadius.circular(28),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(26),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
                     ),
                   ],
                 ),
-                const SizedBox(height: 16),
-                SectionHeader(title: 'Conteúdo'),
-                const SizedBox(height: 6),
-                Container(
-                  constraints: const BoxConstraints(
-                    maxHeight: 110,
-                    minHeight: 110,
-                    minWidth: double.infinity,
-                  ),
-                  padding: const EdgeInsets.all(14),
-                  decoration: BoxDecoration(
-                    color: cs.surface,
-                    borderRadius: BorderRadius.circular(16),
-                    border: Border.all(
-                      color: cs.outline.withValues(alpha: 0.08),
-                    ),
-                  ),
-                  child: SingleChildScrollView(
-                    child: Text(
-                      annotation.content,
-                      style: AppTextStyles.text14.copyWith(
-                        color: cs.inversePrimary,
+                child: Material(
+                  color: Colors.transparent,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(12),
+                            decoration: BoxDecoration(
+                              color: cs.surface,
+                              borderRadius: BorderRadius.circular(14),
+                            ),
+                            child: Icon(
+                              Icons.sticky_note_2_outlined,
+                              size: 22,
+                              color: cs.inversePrimary,
+                            ),
+                          ),
+                          const SizedBox(width: 12),
+                          Expanded(
+                            child: Text(
+                              annotation.title,
+                              maxLines: 2,
+                              overflow: TextOverflow.ellipsis,
+                              style: AppTextStyles.textBold18.copyWith(
+                                color: cs.inversePrimary,
+                                letterSpacing: -0.3,
+                              ),
+                            ),
+                          ),
+                          const SizedBox(width: 8),
+                          GestureDetector(
+                            onTap: () => Navigator.pop(dialogContext),
+                            child: Container(
+                              padding: const EdgeInsets.all(10),
+                              decoration: BoxDecoration(
+                                color: cs.surface,
+                                borderRadius: BorderRadius.circular(12),
+                              ),
+                              child: Icon(
+                                Icons.close_rounded,
+                                size: 18,
+                                color: cs.primary.withValues(alpha: 0.7),
+                              ),
+                            ),
+                          ),
+                        ],
                       ),
-                    ),
+                      const SizedBox(height: 16),
+                      SectionHeader(title: 'Conteúdo'),
+                      const SizedBox(height: 6),
+                      Container(
+                        constraints: const BoxConstraints(
+                          maxHeight: 110,
+                          minHeight: 110,
+                          minWidth: double.infinity,
+                        ),
+                        padding: const EdgeInsets.all(14),
+                        decoration: BoxDecoration(
+                          color: cs.surface,
+                          borderRadius: BorderRadius.circular(16),
+                          border: Border.all(
+                            color: cs.outline.withValues(alpha: 0.08),
+                          ),
+                        ),
+                        child: SingleChildScrollView(
+                          child: Text(
+                            annotation.content,
+                            style: AppTextStyles.text14.copyWith(
+                              color: cs.inversePrimary,
+                            ),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      SectionHeader(title: 'Detalhes'),
+                      const SizedBox(height: 6),
+                      _StatsGrid(
+                        totalChars: totalChars,
+                        totalLetters: totalLetters,
+                        totalNumbers: totalNumbers,
+                        totalEmpty: totalEmpty,
+                        totalSpecial: totalSpecial,
+                        totalEdits: annotation.editCount,
+                      ),
+                      const SizedBox(height: 16),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 16),
-                SectionHeader(title: 'Detalhes'),
-                const SizedBox(height: 6),
-                _StatsGrid(
-                  totalChars: totalChars,
-                  totalLetters: totalLetters,
-                  totalNumbers: totalNumbers,
-                  totalEmpty: totalEmpty,
-                  totalSpecial: totalSpecial,
-                  totalEdits: annotation.editCount,
-                ),
-                const SizedBox(height: 16),
-              ],
+              ),
             ),
           ),
         ),
@@ -235,97 +248,105 @@ class AnnotationCard extends StatelessWidget {
       barrierColor: Colors.black.withAlpha(102),
       transitionDuration: const Duration(milliseconds: 300),
       pageBuilder: (context, animation, secondaryAnimation) => Center(
-        child: Container(
-          margin: const EdgeInsets.symmetric(horizontal: 24),
-          padding: const EdgeInsets.all(28),
-          decoration: BoxDecoration(
-            color: cs.secondary,
-            borderRadius: BorderRadius.circular(32),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withAlpha(26),
-                blurRadius: 30,
-                offset: const Offset(0, 15),
-              ),
-            ],
+        child: ConstrainedBox(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(context).size.height * 0.85,
           ),
           child: Material(
             color: Colors.transparent,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Container(
-                  padding: const EdgeInsets.all(16),
-                  decoration: BoxDecoration(
-                    color: Colors.red.withAlpha(26),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: const Icon(
-                    Icons.delete_outline_rounded,
-                    color: Colors.red,
-                    size: 32,
-                  ),
-                ),
-                const SizedBox(height: 20),
-                Text(
-                  'Deletar',
-                  style: AppTextStyles.textBold20.copyWith(
-                    color: cs.inversePrimary,
-                  ),
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Remover "${_annotation.title}"?',
-                  textAlign: TextAlign.center,
-                  style: AppTextStyles.text16.copyWith(color: cs.primary),
-                ),
-                const SizedBox(height: 28),
-                Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context, false),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: cs.surface,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Cancelar',
-                              style: AppTextStyles.text16.copyWith(
-                                color: cs.primary,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => Navigator.pop(context, true),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(vertical: 14),
-                          decoration: BoxDecoration(
-                            color: Colors.red,
-                            borderRadius: BorderRadius.circular(14),
-                          ),
-                          child: Center(
-                            child: Text(
-                              'Remover',
-                              style: AppTextStyles.text16.copyWith(
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                        ),
-                      ),
+            child: SingleChildScrollView(
+              physics: const BouncingScrollPhysics(),
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 24),
+                padding: const EdgeInsets.all(28),
+                decoration: BoxDecoration(
+                  color: cs.secondary,
+                  borderRadius: BorderRadius.circular(32),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withAlpha(26),
+                      blurRadius: 30,
+                      offset: const Offset(0, 15),
                     ),
                   ],
                 ),
-              ],
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Container(
+                      padding: const EdgeInsets.all(16),
+                      decoration: BoxDecoration(
+                        color: Colors.red.withAlpha(26),
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      child: const Icon(
+                        Icons.delete_outline_rounded,
+                        color: Colors.red,
+                        size: 32,
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                    Text(
+                      'Deletar',
+                      style: AppTextStyles.textBold20.copyWith(
+                        color: cs.inversePrimary,
+                      ),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(
+                      'Remover "${_annotation.title}"?',
+                      textAlign: TextAlign.center,
+                      style: AppTextStyles.text16.copyWith(color: cs.primary),
+                    ),
+                    const SizedBox(height: 28),
+                    Row(
+                      children: [
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context, false),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              decoration: BoxDecoration(
+                                color: cs.surface,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Cancelar',
+                                  style: AppTextStyles.text16.copyWith(
+                                    color: cs.primary,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 12),
+                        Expanded(
+                          child: GestureDetector(
+                            onTap: () => Navigator.pop(context, true),
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(vertical: 14),
+                              decoration: BoxDecoration(
+                                color: Colors.red,
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                              child: Center(
+                                child: Text(
+                                  'Remover',
+                                  style: AppTextStyles.text16.copyWith(
+                                    color: Colors.white,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
         ),

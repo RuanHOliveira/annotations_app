@@ -103,4 +103,44 @@ abstract class AnnotationsControllerBase with Store {
       await load();
     }
   }
+
+  @action
+  Future<void> deleteAll() async {
+    isLoading = true;
+    errorMessage = null;
+
+    try {
+      final userId = await _sessionService.getUserId();
+      if (userId == null) {
+        errorMessage = 'Usuário não encontrado';
+        return;
+      }
+
+      await _annotationsRepository.deleteAll(userId);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      await load();
+    }
+  }
+
+  @action
+  Future<void> reset() async {
+    isLoading = true;
+    errorMessage = null;
+
+    try {
+      final userId = await _sessionService.getUserId();
+      if (userId == null) {
+        errorMessage = 'Usuário não encontrado';
+        return;
+      }
+
+      await _annotationsRepository.reset(userId);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      await load();
+    }
+  }
 }

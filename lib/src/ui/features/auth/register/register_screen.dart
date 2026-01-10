@@ -152,21 +152,25 @@ class _RegisterScreenState extends State<RegisterScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  MultiTextButton(
-                    onPressed: () async => context.go(Routes.login),
-                    children: [
-                      Text(
-                        'Já possui conta? ',
-                        style: AppTextStyles.text14.copyWith(color: cs.primary),
-                      ),
-                      Text(
-                        'Entrar',
-                        style: AppTextStyles.textBold14.copyWith(
-                          color: cs.onPrimary,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: MultiTextButton(
+                      onPressed: () async => context.go(Routes.login),
+                      children: [
+                        Text(
+                          'Já possui conta? ',
+                          style: AppTextStyles.text14.copyWith(
+                            color: cs.primary,
+                          ),
                         ),
-                      ),
-                    ],
+                        Text(
+                          'Entrar',
+                          style: AppTextStyles.textBold14.copyWith(
+                            color: cs.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

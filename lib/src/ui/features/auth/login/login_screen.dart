@@ -119,21 +119,25 @@ class _LoginScreenState extends State<LoginScreen> {
                       },
                     ),
                   ),
-                  const SizedBox(height: 50),
-                  MultiTextButton(
-                    onPressed: () async => context.go(Routes.register),
-                    children: [
-                      Text(
-                        'Não possui conta? ',
-                        style: AppTextStyles.text14.copyWith(color: cs.primary),
-                      ),
-                      Text(
-                        'Cadastrar',
-                        style: AppTextStyles.textBold14.copyWith(
-                          color: cs.onPrimary,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: MultiTextButton(
+                      onPressed: () async => context.go(Routes.register),
+                      children: [
+                        Text(
+                          'Não possui conta? ',
+                          style: AppTextStyles.text14.copyWith(
+                            color: cs.primary,
+                          ),
                         ),
-                      ),
-                    ],
+                        Text(
+                          'Cadastrar',
+                          style: AppTextStyles.textBold14.copyWith(
+                            color: cs.onPrimary,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),

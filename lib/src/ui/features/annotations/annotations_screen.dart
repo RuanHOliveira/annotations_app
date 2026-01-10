@@ -5,6 +5,7 @@ import 'package:annotations_app/src/ui/core/components/inputs/custom_text_form_f
 import 'package:annotations_app/src/ui/core/components/useful/custom_toast.dart';
 import 'package:annotations_app/src/ui/features/annotations/annotations_controller.dart';
 import 'package:annotations_app/src/ui/features/annotations/components/annotation_card.dart';
+import 'package:annotations_app/src/ui/features/annotations/components/custom_actions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 
@@ -42,7 +43,12 @@ class _AnnotationsScreenState extends State<AnnotationsScreen> {
         parent: AlwaysScrollableScrollPhysics(),
       ),
       slivers: [
-        CustomAppBar(title: 'Notas'),
+        CustomAppBar(
+          title: 'Notas',
+          actions: [
+            CustomActions(annotationsController: widget._annotationsController),
+          ],
+        ),
         SliverPadding(
           padding: padding,
           sliver: SliverToBoxAdapter(
@@ -134,6 +140,7 @@ class _AnnotationsScreenState extends State<AnnotationsScreen> {
     showModalBottomSheet(
       context: context,
       backgroundColor: cs.surface,
+      isScrollControlled: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -186,64 +193,58 @@ class _AddAnnotationState extends State<_AddAnnotation> {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
+    final bottomInset = MediaQuery.of(context).viewInsets.bottom;
+
     return Padding(
       padding: EdgeInsets.fromLTRB(
         24,
         24,
         24,
-        MediaQuery.of(context).viewInsets.bottom +
-            MediaQuery.of(context).padding.bottom +
-            16,
+        bottomInset > 0 ? bottomInset + 16 : 24,
       ),
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Nova nota',
-              style: AppTextStyles.textBold20.copyWith(
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'Nova nota',
+            style: AppTextStyles.textBold20.copyWith(color: cs.inversePrimary),
+          ),
+          const SizedBox(height: 20),
+          CustomTextFormField(
+            padding: EdgeInsets.all(0),
+            controller: _titleController,
+            hintText: 'Título',
+            borderRadius: 12,
+          ),
+          const SizedBox(height: 16),
+          CustomTextFormField(
+            padding: EdgeInsets.all(0),
+            controller: _contentController,
+            hintText: 'Digite aqui o conteúdo da nota...',
+            borderRadius: 12,
+            minLines: 6,
+            maxLines: 6,
+          ),
+          const SizedBox(height: 24),
+          GestureDetector(
+            onTap: () async => _addAnnotation(),
+            child: Container(
+              width: double.infinity,
+              padding: const EdgeInsets.symmetric(vertical: 16),
+              decoration: BoxDecoration(
                 color: cs.inversePrimary,
+                borderRadius: BorderRadius.circular(16),
               ),
-            ),
-            const SizedBox(height: 20),
-            CustomTextFormField(
-              padding: EdgeInsets.all(0),
-              controller: _titleController,
-              hintText: 'Título',
-              borderRadius: 12,
-            ),
-            const SizedBox(height: 16),
-            CustomTextFormField(
-              padding: EdgeInsets.all(0),
-              controller: _contentController,
-              hintText: 'Digite aqui o conteúdo da nota...',
-              borderRadius: 12,
-              minLines: 6,
-              maxLines: 6,
-            ),
-            const SizedBox(height: 24),
-            GestureDetector(
-              onTap: () async => _addAnnotation(),
-              child: Container(
-                width: double.infinity,
-                padding: const EdgeInsets.symmetric(vertical: 16),
-                decoration: BoxDecoration(
-                  color: cs.inversePrimary,
-                  borderRadius: BorderRadius.circular(16),
-                ),
-                child: Center(
-                  child: Text(
-                    'Adicionar',
-                    style: AppTextStyles.textBold16.copyWith(
-                      color: cs.secondary,
-                    ),
-                  ),
+              child: Center(
+                child: Text(
+                  'Adicionar',
+                  style: AppTextStyles.textBold16.copyWith(color: cs.secondary),
                 ),
               ),
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }

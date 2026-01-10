@@ -57,6 +57,14 @@ class AnnotationsRepository {
     await _annotationsDao.softDelete(id);
   }
 
+  Future<void> deleteAll(int userID) async {
+    await _annotationsDao.softDeleteAllbyUserId(userID);
+  }
+
+  Future<void> reset(int userID) async {
+    await _annotationsDao.resetByUserId(userID);
+  }
+
   Future<AnnotationsDetails> getDetails(int userId) async {
     final activeList = await _annotationsDao.findByUserId(userId);
     final deletedList = await _annotationsDao.findDeletedByUserId(userId);

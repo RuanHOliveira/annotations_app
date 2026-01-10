@@ -99,15 +99,19 @@ class DetailsCharsChart extends StatelessWidget {
                 for (final s in segments) ...[
                   Row(
                     children: [
-                      Text(
-                        '${s.pctText(total)} ',
-                        style: AppTextStyles.textBold12.copyWith(
-                          color: s.color,
-                          letterSpacing: -0.3,
+                      SizedBox(
+                        width: 36,
+                        child: Text(
+                          s.pctText(total),
+                          textAlign: TextAlign.left,
+                          style: AppTextStyles.textBold12.copyWith(
+                            color: s.color,
+                            letterSpacing: -0.3,
+                          ),
                         ),
                       ),
                       Text(
-                        ' ${s.label}',
+                        s.label,
                         style: AppTextStyles.textBold12.copyWith(
                           color: s.color,
                           letterSpacing: -0.3,
@@ -123,6 +127,7 @@ class DetailsCharsChart extends StatelessWidget {
                       ),
                     ],
                   ),
+
                   const SizedBox(height: 4),
                 ],
               ],

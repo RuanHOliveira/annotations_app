@@ -105,6 +105,26 @@ mixin _$AnnotationsController on AnnotationsControllerBase, Store {
     return _$deleteAsyncAction.run(() => super.delete(annotationId));
   }
 
+  late final _$deleteAllAsyncAction = AsyncAction(
+    'AnnotationsControllerBase.deleteAll',
+    context: context,
+  );
+
+  @override
+  Future<void> deleteAll() {
+    return _$deleteAllAsyncAction.run(() => super.deleteAll());
+  }
+
+  late final _$resetAsyncAction = AsyncAction(
+    'AnnotationsControllerBase.reset',
+    context: context,
+  );
+
+  @override
+  Future<void> reset() {
+    return _$resetAsyncAction.run(() => super.reset());
+  }
+
   @override
   String toString() {
     return '''

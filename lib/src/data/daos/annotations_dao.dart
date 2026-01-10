@@ -73,4 +73,22 @@ class AnnotationsDao {
       whereArgs: [id],
     );
   }
+
+  Future<int> softDeleteAllbyUserId(int userID) async {
+    final db = await _db;
+    return db.update(
+      _tableName,
+      {
+        'deleted_at': DateTime.now().toIso8601String(),
+        'updated_at': DateTime.now().toIso8601String(),
+      },
+      where: 'user_id = ? AND deleted_at IS NULL',
+      whereArgs: [userID],
+    );
+  }
+
+  Future<int> resetByUserId(int userID) async {
+    final db = await _db;
+    return db.delete(_tableName, where: 'user_id = ?', whereArgs: [userID]);
+  }
 }
