@@ -2,7 +2,6 @@ import 'package:annotations_app/src/routing/routes.dart';
 import 'package:annotations_app/src/ui/core/themes/app_text_styles.dart';
 import 'package:annotations_app/src/ui/features/main_navigation/main_navigation_controller.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
 
@@ -41,9 +40,9 @@ class _MainNavigationScreenState extends State<MainNavigationScreen> {
     );
   }
 
-  void _changeScreen(int selectedIndex) {
-    widget._mainNavigationController.screenSelect(selectedIndex);
-    Navigator.pop(context);
+  void _changeScreen(int selectedIndex) async {
+    await widget._mainNavigationController.screenSelect(selectedIndex);
+    if (mounted) Navigator.pop(context);
   }
 }
 

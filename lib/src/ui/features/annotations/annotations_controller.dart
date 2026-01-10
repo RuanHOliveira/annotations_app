@@ -31,13 +31,14 @@ abstract class AnnotationsControllerBase with Store {
   Future<void> load() async {
     isLoading = true;
     errorMessage = null;
-    final userId = await _sessionService.getUserId();
-    if (userId == null) {
-      errorMessage = 'Usuário não encontrado';
-      return;
-    }
 
     try {
+      final userId = await _sessionService.getUserId();
+      if (userId == null) {
+        errorMessage = 'Usuário não encontrado';
+        return;
+      }
+
       final list = await _annotationsRepository.getByUserId(userId);
       annotations = ObservableList.of(list);
     } catch (e) {
@@ -52,19 +53,23 @@ abstract class AnnotationsControllerBase with Store {
     isLoading = true;
     errorMessage = null;
 
-    final userId = await _sessionService.getUserId();
-    if (userId == null) {
-      errorMessage = 'Usuário não encontrado';
-      return;
+    try {
+      final userId = await _sessionService.getUserId();
+      if (userId == null) {
+        errorMessage = 'Usuário não encontrado';
+        return;
+      }
+
+      await _annotationsRepository.create(
+        userId: userId,
+        title: title,
+        content: content,
+      );
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      await load();
     }
-
-    await _annotationsRepository.create(
-      userId: userId,
-      title: title,
-      content: content,
-    );
-
-    await load();
   }
 
   @action
@@ -72,13 +77,17 @@ abstract class AnnotationsControllerBase with Store {
     isLoading = true;
     errorMessage = null;
 
-    await _annotationsRepository.update(
-      current: updated,
-      title: updated.title,
-      content: updated.content,
-    );
-
-    await load();
+    try {
+      await _annotationsRepository.update(
+        current: updated,
+        title: updated.title,
+        content: updated.content,
+      );
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      await load();
+    }
   }
 
   @action
@@ -86,8 +95,12 @@ abstract class AnnotationsControllerBase with Store {
     isLoading = true;
     errorMessage = null;
 
-    await _annotationsRepository.delete(annotationId);
-
-    await load();
+    try {
+      await _annotationsRepository.delete(annotationId);
+    } catch (e) {
+      errorMessage = e.toString();
+    } finally {
+      await load();
+    }
   }
 }

@@ -36,6 +36,18 @@ mixin _$MainNavigationController on MainNavigationControllerBase, Store {
     });
   }
 
+  late final _$screenSelectAsyncAction = AsyncAction(
+    'MainNavigationControllerBase.screenSelect',
+    context: context,
+  );
+
+  @override
+  Future<void> screenSelect(int newSelectedIndex) {
+    return _$screenSelectAsyncAction.run(
+      () => super.screenSelect(newSelectedIndex),
+    );
+  }
+
   late final _$clearAuthAsyncAction = AsyncAction(
     'MainNavigationControllerBase.clearAuth',
     context: context,
@@ -44,22 +56,6 @@ mixin _$MainNavigationController on MainNavigationControllerBase, Store {
   @override
   Future<void> clearAuth() {
     return _$clearAuthAsyncAction.run(() => super.clearAuth());
-  }
-
-  late final _$MainNavigationControllerBaseActionController = ActionController(
-    name: 'MainNavigationControllerBase',
-    context: context,
-  );
-
-  @override
-  void screenSelect(int newSelectedIndex) {
-    final _$actionInfo = _$MainNavigationControllerBaseActionController
-        .startAction(name: 'MainNavigationControllerBase.screenSelect');
-    try {
-      return super.screenSelect(newSelectedIndex);
-    } finally {
-      _$MainNavigationControllerBaseActionController.endAction(_$actionInfo);
-    }
   }
 
   @override

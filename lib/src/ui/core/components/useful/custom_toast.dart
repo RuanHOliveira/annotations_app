@@ -1,4 +1,3 @@
-import 'package:annotations_app/src/ui/core/themes/app_colors.dart';
 import 'package:annotations_app/src/ui/core/themes/app_text_styles.dart';
 import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter/material.dart';
@@ -14,16 +13,16 @@ class CustomToast {
     Icon? getIconDefault() {
       switch (toastType) {
         case 'info':
-          return Icon(Icons.info_outline_rounded, color: AppColors.info);
+          return Icon(Icons.info_outline_rounded, color: Color(0xFF2196F3));
         case 'warning':
-          return Icon(Icons.warning_amber_rounded, color: AppColors.warning);
+          return Icon(Icons.warning_amber_rounded, color: Color(0xFFFF9800));
         case 'success':
           return Icon(
             Icons.check_circle_outline_rounded,
-            color: AppColors.success,
+            color: Color(0xFF4CAF50),
           );
         case 'error':
-          return Icon(Icons.error_outline_rounded, color: AppColors.error);
+          return Icon(Icons.error_outline_rounded, color: Color(0xFFF44336));
         default:
           return Icon(Icons.info_outline_rounded, color: cs.onPrimary);
       }

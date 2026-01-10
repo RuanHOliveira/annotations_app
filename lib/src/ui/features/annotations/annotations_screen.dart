@@ -28,6 +28,11 @@ class _AnnotationsScreenState extends State<AnnotationsScreen> {
   }
 
   @override
+  void dispose() {
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final ColorScheme cs = Theme.of(context).colorScheme;
     final padding = const EdgeInsets.symmetric(horizontal: 16, vertical: 8);
@@ -161,7 +166,7 @@ class _AddAnnotationState extends State<_AddAnnotation> {
 
   Future<void> _addAnnotation() async {
     final title = _titleController.text.trim();
-    final content = _contentController.text.trim();
+    final content = _contentController.text;
 
     if (title.isEmpty || content.isEmpty) {
       customToast.showToast(

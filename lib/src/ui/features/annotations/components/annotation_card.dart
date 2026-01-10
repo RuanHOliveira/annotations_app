@@ -94,6 +94,8 @@ class AnnotationCard extends StatelessWidget {
     final totalChars = content.length;
     final totalLetters = Utils.countLetters(content);
     final totalNumbers = Utils.countNumbers(content);
+    final totalEmpty = Utils.countEmpty(content);
+    final totalSpecial = Utils.countSpecial(content);
 
     return showGeneralDialog<void>(
       context: context,
@@ -133,7 +135,7 @@ class AnnotationCard extends StatelessWidget {
                       child: Icon(
                         Icons.sticky_note_2_outlined,
                         size: 22,
-                        color: cs.primary.withValues(alpha: 0.7),
+                        color: cs.inversePrimary,
                       ),
                     ),
                     const SizedBox(width: 12),
@@ -186,7 +188,9 @@ class AnnotationCard extends StatelessWidget {
                   child: SingleChildScrollView(
                     child: Text(
                       annotation.content,
-                      style: AppTextStyles.text14.copyWith(color: cs.primary),
+                      style: AppTextStyles.text14.copyWith(
+                        color: cs.inversePrimary,
+                      ),
                     ),
                   ),
                 ),
@@ -197,6 +201,8 @@ class AnnotationCard extends StatelessWidget {
                   totalChars: totalChars,
                   totalLetters: totalLetters,
                   totalNumbers: totalNumbers,
+                  totalEmpty: totalEmpty,
+                  totalSpecial: totalSpecial,
                   totalEdits: annotation.editCount,
                 ),
                 const SizedBox(height: 16),
@@ -435,7 +441,7 @@ class AnnotationCard extends StatelessWidget {
                       child: GestureDetector(
                         onTap: () {
                           final title = titleController.text.trim();
-                          final content = contentController.text.trim();
+                          final content = contentController.text;
 
                           if (title.isEmpty || content.isEmpty) {
                             customToast.showToast(
@@ -500,12 +506,16 @@ class _StatsGrid extends StatelessWidget {
   final int totalChars;
   final int totalLetters;
   final int totalNumbers;
+  final int totalEmpty;
+  final int totalSpecial;
   final int totalEdits;
 
   const _StatsGrid({
     required this.totalChars,
     required this.totalLetters,
     required this.totalNumbers,
+    required this.totalEmpty,
+    required this.totalSpecial,
     required this.totalEdits,
   });
 
@@ -513,7 +523,7 @@ class _StatsGrid extends StatelessWidget {
   Widget build(BuildContext context) {
     final cs = Theme.of(context).colorScheme;
 
-    Widget tile(String label, int value, IconData icon) {
+    Widget tile(String label, int value, IconData icon, Color iconColor) {
       return Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
@@ -526,14 +536,10 @@ class _StatsGrid extends StatelessWidget {
             Container(
               padding: const EdgeInsets.all(10),
               decoration: BoxDecoration(
-                color: cs.secondary,
+                color: iconColor.withAlpha(26),
                 borderRadius: BorderRadius.circular(12),
               ),
-              child: Icon(
-                icon,
-                size: 18,
-                color: cs.primary.withValues(alpha: 0.7),
-              ),
+              child: Icon(icon, size: 18, color: iconColor),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -566,27 +572,79 @@ class _StatsGrid extends StatelessWidget {
       children: [
         Row(
           children: [
-            Expanded(child: tile('Edições', totalEdits, Icons.edit_rounded)),
-          ],
-        ),
-        const SizedBox(height: 6),
-        Row(
-          children: [
             Expanded(
-              child: tile('Caracteres', totalChars, Icons.text_fields_rounded),
+              child: tile(
+                'Edições',
+                totalEdits,
+                Icons.edit_rounded,
+                Colors.blue,
+              ),
             ),
           ],
         ),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: tile('Letras', totalLetters, Icons.abc_rounded)),
+            Expanded(
+              child: tile(
+                'Caracteres',
+                totalChars,
+                Icons.text_fields_rounded,
+                Colors.orange,
+              ),
+            ),
           ],
         ),
         const SizedBox(height: 6),
         Row(
           children: [
-            Expanded(child: tile('Números', totalNumbers, Icons.pin_rounded)),
+            Expanded(
+              child: tile(
+                'Letras',
+                totalLetters,
+                Icons.abc_rounded,
+                Colors.red,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: tile(
+                'Números',
+                totalNumbers,
+                Icons.pin_rounded,
+                Colors.teal,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: tile(
+                'Vazios (em branco)',
+                totalEmpty,
+                Icons.space_bar_rounded,
+                cs.inversePrimary,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 6),
+        Row(
+          children: [
+            Expanded(
+              child: tile(
+                'Especiais (ex: "!@#%")',
+                totalSpecial,
+                Icons.code_rounded,
+                Colors.purple,
+              ),
+            ),
           ],
         ),
       ],

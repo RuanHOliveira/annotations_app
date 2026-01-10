@@ -3,5 +3,4 @@ targets:
     builders:
       mobx_codegen:
         generate_for:
-          - lib/**_store.dart
-          - lib/**_controller.dart
+          - lib/src/ui/features/**_controller.dart

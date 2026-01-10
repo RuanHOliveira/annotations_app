@@ -1,6 +1,7 @@
 import 'package:annotations_app/src/data/daos/annotations_dao.dart';
 import 'package:annotations_app/src/data/models/annotation.dart';
 import 'package:annotations_app/src/data/models/annotations_details.dart';
+import 'package:annotations_app/src/utils/%20utils.dart';
 
 class AnnotationsRepository {
   final AnnotationsDao _annotationsDao;
@@ -27,7 +28,7 @@ class AnnotationsRepository {
     final annotation = Annotation(
       userId: userId,
       title: title.trim(),
-      content: content.trim(),
+      content: content,
       editCount: 0,
       createdAt: now,
       updatedAt: now,
@@ -44,7 +45,7 @@ class AnnotationsRepository {
   }) async {
     final updated = current.copyWith(
       title: title.trim(),
-      content: content.trim(),
+      content: content,
       editCount: current.editCount + 1,
       updatedAt: DateTime.now(),
     );
@@ -64,20 +65,28 @@ class AnnotationsRepository {
     final totalDeleted = deletedList.length;
     final totalCreated = totalActive + totalDeleted;
 
-    final totalEdits = _sumEdits(activeList) + _sumEdits(deletedList);
+    final totalEditsActive = Utils.sumEdits(activeList);
+    final totalEditsDeleted = Utils.sumEdits(deletedList);
+    final totalEditsAll =
+        Utils.sumEdits(activeList) + Utils.sumEdits(deletedList);
 
-    final activeText = _calcText(activeList);
-    final deletedText = _calcText(deletedList);
+    final activeText = Utils.calcText(activeList);
+    final deletedText = Utils.calcText(deletedList);
 
     final totalCharsAll = activeText.chars + deletedText.chars;
     final totalLettersAll = activeText.letters + deletedText.letters;
     final totalNumbersAll = activeText.numbers + deletedText.numbers;
+    final totalEmptyAll = activeText.empty + deletedText.empty;
+    final totalSpecialAll = activeText.special + deletedText.special;
 
     return AnnotationsDetails(
       totalCreated: totalCreated,
       totalActive: totalActive,
       totalDeleted: totalDeleted,
-      totalEdits: totalEdits,
+
+      totalEditsActive: totalEditsActive,
+      totalEditsDeleted: totalEditsDeleted,
+      totalEditsAll: totalEditsAll,
 
       totalCharsActive: activeText.chars,
       totalCharsDeleted: deletedText.chars,
@@ -90,26 +99,14 @@ class AnnotationsRepository {
       totalNumbersActive: activeText.numbers,
       totalNumbersDeleted: deletedText.numbers,
       totalNumbersAll: totalNumbersAll,
+
+      totalEmptyActive: activeText.empty,
+      totalEmptyDeleted: deletedText.empty,
+      totalEmptyAll: totalEmptyAll,
+
+      totalSpecialActive: activeText.special,
+      totalSpecialDeleted: deletedText.special,
+      totalSpecialAll: totalSpecialAll,
     );
-  }
-
-  int _sumEdits(List<Annotation> list) {
-    return list.fold<int>(0, (sum, a) => sum + a.editCount);
-  }
-
-  ({int chars, int letters, int numbers}) _calcText(List<Annotation> list) {
-    int chars = 0;
-    int letters = 0;
-    int numbers = 0;
-
-    for (final item in list) {
-      final text = item.content;
-
-      chars += text.length;
-      letters += RegExp(r'\p{L}', unicode: true).allMatches(text).length;
-      numbers += RegExp(r'\p{N}', unicode: true).allMatches(text).length;
-    }
-
-    return (chars: chars, letters: letters, numbers: numbers);
   }
 }

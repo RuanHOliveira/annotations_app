@@ -34,8 +34,14 @@ abstract class MainNavigationControllerBase with Store {
   ];
 
   @action
-  void screenSelect(int newSelectedIndex) {
+  Future<void> screenSelect(int newSelectedIndex) async {
     selectedIndex = newSelectedIndex;
+
+    if (newSelectedIndex == 0) {
+      await _annotationsController.load();
+    } else if (newSelectedIndex == 1) {
+      await _detailsController.load();
+    }
   }
 
   @action
